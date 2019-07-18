@@ -28,17 +28,21 @@ In host generate ssl file:
 
 ```
 $ openssl rand -base64 741 > mongodb-keyfile
-
-$ sudo chown 999:999 /home/core/mongodb-keyfile 
 ```
 
-And copy it to `/home/core` in each node:
+And copy it from hosts to `/home/core` in each node:
 
 `$ docker-machine scp mongodb-keyfile node1:/home/core`
 
+`$ sudo chown 999:999 /home/core/mongodb-keyfile`
+
 `$ docker-machine scp mongodb-keyfile node2:/home/core`
 
+`$ sudo chown 999:999 /home/core/mongodb-keyfile`
+
 `$ docker-machine scp mongodb-keyfile node3:/home/core`
+
+`$ sudo chown 999:999 /home/core/mongodb-keyfile`
 
 Change `keyfile` in nodes to be owned by **999**.
 
@@ -81,6 +85,7 @@ $ docker rm mongo
 Start mongo in node1:
 
 ```
+
 $ docker run \
 --name mongo \
 -v /home/core/mongo-files/data:/data/db \
@@ -88,13 +93,15 @@ $ docker run \
 --hostname="node1" \
 --add-host node1:${node1} \
 --add-host node2:${node2} \
+--add-host node3:${node3} \
 -p 27017:27017 -d mongo:latest \
 --smallfiles \
 --keyFile /opt/keyfile/mongodb-keyfile \
 --replSet "rs0"
 ```
 
-And next in node2 start mongo image:
+And next in node2, node3... start mongo image:
+
 ```
 $ docker run \
 --name mongo \
@@ -103,6 +110,7 @@ $ docker run \
 --hostname="node2" \
 --add-host node1:${node1} \
 --add-host node2:${node2} \
+--add-host node3:${node3} \
 -p 27017:27017 -d mongo:latest \
 --smallfiles \
 --keyFile /opt/keyfile/mongodb-keyfile \
@@ -111,7 +119,11 @@ $ docker run \
 
 Add to cluster, from node1:
 
-`rs0:PRIMARY> rs.add("node2")`
+```
+> use admin
+> db.auth("siteRootAdmin", "password");
+rs0:PRIMARY> rs.add("node2")`
+```
 
 Check configuration and status:
 
