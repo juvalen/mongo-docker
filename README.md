@@ -2,87 +2,95 @@
 
 https://medium.com/@ManagedKube/deploy-a-mongodb-cluster-in-steps-9-using-docker-49205e231319#.mle6a8wmg
 
-Create and start three nodes in Vagrant, with `boot2docker.iso`:
+Creates a mongodb cluster based on docker images in Virtualbox.
 
-0. host:  192.168.99.26
+The virtual boxes can run docker containers to hold the nodes. Configuration and providioning is made from the host.
 
-Add an extra IP to host with:
+Virtual boxes are created in Google Cloud from desktop machine (verdi):
 
-`$ sudo ip addr add 192.168.99.26/24 dev wlp16s0p` 
+0. verdi:  92.58.155.73 (local)
 
-1. node1: 192.168.99.106
+1. docker1: 34.74.47.211 (Google Cloud)
 
-2. node2: 192.168.99.105
+2. docker2: 35.231.170.2 (Google Cloud)
 
-3. node3: 192.168.99.103
+3. docker3: 35.237.123.104 (google cloud)
 
 Run in each node:
 
 ```
-$ export node1=192.168.99.106
-$ export node2=192.168.99.105
-$ export node3=192.168.99.103
+export docker1=34.74.47.211
+export docker2=35.231.170.2
+export docker3=35.237.123.104
 ```
 
 In host generate ssl file:
 
 ```
-$ openssl rand -base64 741 > mongodb-keyfile
+openssl rand -base64 741 > mongodb-keyfile
 ```
 
-And copy it from hosts to `/home/core` in each node:
+And copy it from hosts to `/home/core` in each node.
 
-`$ docker-machine scp mongodb-keyfile node1:/home/core`
+Then change `keyfile` in nodes to be owned by **999**:
 
-`$ sudo chown 999:999 /home/core/mongodb-keyfile`
+```
+sudo chown 999:999 /home/core/mongodb-keyfile
+```
 
-`$ docker-machine scp mongodb-keyfile node2:/home/core`
+Install docker in each node:
 
-`$ sudo chown 999:999 /home/core/mongodb-keyfile`
+```
+sudo apt update
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+sudo apt -y update
+sudo apt install -y docker-ce docker-ce-cli containerd.io
+```
 
-`$ docker-machine scp mongodb-keyfile node3:/home/core`
+Add current user to docker group so as not using sudo:
 
-`$ sudo chown 999:999 /home/core/mongodb-keyfile`
+```
+sudo usermod -a -G docker <user>
 
-Change `keyfile` in nodes to be owned by **999**.
+```
+And logout.
 
-In node1 run unauthenticated docker:
+In docker1 run unauthenticated docker:
 
 ```
 $ docker run --name mongo \
 -v /home/core/mongo-files/data:/data/db \
 -v /home/core:/opt/keyfile \
---hostname="node1" \
+--hostname="docker1" \
 -p 27017:27017 \
 -d mongo:latest --smallfiles
 ```
 
-Then add admin & root user at mongo prompt:
+Then log in the container and add an admin & root user at mongo prompt:
 
 ```
+> use admin
 > db.createUser( {
      user: "siteUserAdmin",
-     pwd: "password",
+     pwd: "123poi",
      roles: [ { role: "userAdminAnyDatabase", db: "admin" } ]
    });
-```
-
-```
 > db.createUser( {
      user: "siteRootAdmin",
-     pwd: "password",
+     pwd: "123poi",
      roles: [ { role: "root", db: "admin" } ]
    });
 ```
 
-Now restart mongo container authenticated, remember to run first:
+Now restart mongo container authenticated from the VM, remember to run first:
 
 ```
 $ docker stop mongo
 $ docker rm mongo
 ```
 
-Start mongo in node1:
+Start mongo in docker1:
 
 ```
 
@@ -91,9 +99,9 @@ $ docker run \
 -v /home/core/mongo-files/data:/data/db \
 -v /home/core:/opt/keyfile \
 --hostname="node1" \
---add-host node1:${node1} \
---add-host node2:${node2} \
---add-host node3:${node3} \
+--add-host node1:${docker1} \
+--add-host node2:${docker2} \
+--add-host node3:${docker3} \
 -p 27017:27017 -d mongo:latest \
 --smallfiles \
 --keyFile /opt/keyfile/mongodb-keyfile \
@@ -108,30 +116,50 @@ $ docker run \
 -v /home/core/mongo-files/data:/data/db \
 -v /home/core:/opt/keyfile \
 --hostname="node2" \
---add-host node1:${node1} \
---add-host node2:${node2} \
---add-host node3:${node3} \
+--add-host node1:${docker1} \
+--add-host node2:${docker2} \
+--add-host node3:${docker3} \
 -p 27017:27017 -d mongo:latest \
 --smallfiles \
 --keyFile /opt/keyfile/mongodb-keyfile \
 --replSet "rs0"
 ```
 
-Add to cluster, from node1:
+Add to cluster, from docker1:
 
 ```
 > use admin
-> db.auth("siteRootAdmin", "password");
-rs0:PRIMARY> rs.add("node2")`
+> db.auth("siteRootAdmin", "123poi");
+rs0:PRIMARY> rs.add("docker2")`
+rs0:PRIMARY> rs.add("docker3")`
 ```
 
-Check configuration and status:
+Initiate the replica:
+
+```
+rs.initiate({
+      _id: "rs0",
+      version: 1,
+      members: [
+         { _id: 0, host : "docker1:27017" }
+      ]
+   }
+)
+```
+
+Check mongo configuration and status:
 
 `rs0:PRIMARY> rs.conf()`
 
-See logs with:
-
-`$ docker logs -ft mongo`
-
 `rs0:PRIMARY> rs.status()`
+
+In secondary nodes run:
+
+```
+rs.slaveOk()
+```
+
+See logs from VM with:
+
+`docker logs -ft mongo`
 
