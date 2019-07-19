@@ -1,0 +1,7 @@
+provider "google" {
+  credentials = file("test2-351c2104567b.json")
+  project     = "test2"
+  region      = "us-east1"
+  zone        = "us-east1-b"
+}
+
