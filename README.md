@@ -1,7 +1,5 @@
 # MongoDB with docker containers in Google Cloud
 
-Based in `https://medium.com/@ManagedKube/deploy-a-mongodb-cluster-in-steps-9-using-docker-49205e231319#.mle6a8wmg`
-
 Creates a mongodb cluster based on docker images in Google Cloud.
 
 The virtual boxes can run docker containers to hold the nodes. Configuration and providioning is made from the host.
@@ -34,9 +32,9 @@ In host generate ssl file:
 openssl rand -base64 741 > mongodb-keyfile
 ```
 
-And copy it from hosts to `/home/core` in each node.
+And copy it from host to `/home/core` in each node.
 
-Then change `keyfile` in nodes to be owned by **999**:
+Then change `mongodb-keyfile` in nodes to be owned by **999**:
 
 ```
 sudo chown 999:999 /home/core/mongodb-keyfile
@@ -171,9 +169,17 @@ See logs from VM with:
 
 ## TODO
 
-Do this with Docker swarm.
+Do this with:
+
+1. Terraforrm over AWS
+
+1. Ansible to install a swarm
+
+1. Deploy mongo images with docker swarm
 
 ## Author
+
+Based in `https://medium.com/@ManagedKube/deploy-a-mongodb-cluster-in-steps-9-using-docker-49205e231319#.mle6a8wmg`
 
 * **Juan Valentín-Pastrana** (jvalentinpastrana at gmail)
 

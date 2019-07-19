@@ -1,1 +1,4 @@
-.vagrant
+.*
+*.csv
+*.backup
+*.pem
