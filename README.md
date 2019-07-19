@@ -1,10 +1,12 @@
 # MongoDB with docker containers (Vagrant/Virtualbox)
 
-https://medium.com/@ManagedKube/deploy-a-mongodb-cluster-in-steps-9-using-docker-49205e231319#.mle6a8wmg
+Based in `https://medium.com/@ManagedKube/deploy-a-mongodb-cluster-in-steps-9-using-docker-49205e231319#.mle6a8wmg`
 
-Creates a mongodb cluster based on docker images in Virtualbox.
+Creates a mongodb cluster based on docker images in Google Cloud.
 
 The virtual boxes can run docker containers to hold the nodes. Configuration and providioning is made from the host.
+
+## Network setup
 
 Virtual boxes are created in Google Cloud from desktop machine (verdi):
 
@@ -24,6 +26,8 @@ export docker2=35.231.170.2
 export docker3=35.237.123.104
 ```
 
+And don't forget to open por **27017**.
+
 In host generate ssl file:
 
 ```
@@ -37,6 +41,8 @@ Then change `keyfile` in nodes to be owned by **999**:
 ```
 sudo chown 999:999 /home/core/mongodb-keyfile
 ```
+
+## Docker engine
 
 Install docker in each node:
 
@@ -162,4 +168,14 @@ rs.slaveOk()
 See logs from VM with:
 
 `docker logs -ft mongo`
+
+## TODO
+
+Do this with ansible.
+
+## Author
+
+* **Juan Valentín-Pastrana** (jvalentinpastrana at gmail)
+
+Send feedback if you wish.
 
