@@ -1,4 +1,4 @@
-# MongoDB with docker containers (Vagrant/Virtualbox)
+# MongoDB with docker containers in Google Cloud
 
 Based in `https://medium.com/@ManagedKube/deploy-a-mongodb-cluster-in-steps-9-using-docker-49205e231319#.mle6a8wmg`
 
@@ -16,9 +16,9 @@ Virtual boxes are created in Google Cloud from desktop machine (verdi):
 
 2. docker2: 35.231.170.2 (Google Cloud)
 
-3. docker3: 35.237.123.104 (google cloud)
+3. docker3: 35.237.123.104 (Google Cloud)
 
-Run in each node:
+Remember you generate the cloud RSA access keys and send public to cloud manager. Then run in each node:
 
 ```
 export docker1=34.74.47.211
@@ -171,7 +171,7 @@ See logs from VM with:
 
 ## TODO
 
-Do this with ansible.
+Do this with Docker swarm.
 
 ## Author
 
