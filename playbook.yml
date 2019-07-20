@@ -5,6 +5,15 @@
     remote_user: juan
     gather_facts: False
     tasks:
+      - name: Append lines to /etc/hosts
+        lineinfile:
+          dest: /etc/hosts
+          line: "{{ item }}"
+        with_items:
+          - "10.142.0.5 docker1"
+          - "10.142.0.6 docker2"
+          - "10.142.0.7 docker3"
+
       - name: Install apt-transport-https
         apt: name=apt-transport-https
 
@@ -28,9 +37,6 @@
         apt_repository:
           repo: deb https://download.docker.com/linux/ubuntu xenial stable
           state: present
-
-      #- name: Update apt and install docker-ce
-        #apt: update_cache=yes name=docker-ce state=latest
 
       - name: Install pip
         apt:
@@ -70,13 +76,15 @@
     become: yes
     remote_user: juan
     gather_facts: False
+    vars:
+      master: 10.142.0.5
     tasks:
 
       - name: Leave former Swarm 
         command: docker swarm leave --force
 
       - name: Swarm Init
-        command: docker swarm init --advertise-addr {{ inventory_hostname }}
+        command: docker swarm init --advertise-addr {{ master }}
 
       - name: Get Worker Token
         command: docker swarm join-token worker -q
@@ -85,7 +93,7 @@
       - name: Show Worker Token
         debug: var=worker_token.stdout
 
-      - name: Master Token
+      - name: Get Master Token
         command: docker swarm join-token manager -q
         register: master_token
 
@@ -99,10 +107,11 @@
     gather_facts: False
     vars:
       token: "{{ hostvars[groups['masters'][0]]['worker_token']['stdout'] }}"
-      master: "{{ hostvars[groups['masters'][0]]['inventory_hostname'] }}"
+      #master: "{{ hostvars[groups['masters'][0]]['inventory_hostname'] }}"
+      master: 10.142.0.5
     tasks:
-      #- name: Leave former Swarm 
-        #command: docker swarm leave
+      - name: Leave former Swarm 
+        command: docker swarm leave
 
       - name: Join Swarm Cluster as a Worker
         command: docker swarm join --token {{ token }} {{ master }}:2377

@@ -29,7 +29,23 @@ In `/etc/ansible/hosts` write their address:
 34.74.47.211
 ```
 
-Remember thet in Google Cloud you first generate the cloud RSA access keys and send public to cloud manager. Then run in each node:
+Remember thet in Google Cloud you first generate the cloud RSA access keys and send public to cloud manager. Then publish in each node the internal address:
+
+```
+export docker1=10.142.0.5
+export docker2=10.142.0.6
+export docker3=10.142.0.7
+```
+
+This will be appended to /etc/host:
+
+```
+10.142.0.5 docker1
+10.142.0.6 docker2
+10.142.0.7 docker3
+```
+
+And the external to <host>:
 
 ```
 export docker1=35.231.170.2
