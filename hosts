@@ -9,10 +9,10 @@
 #   - A hostname/ip can be a member of multiple groups
 
 [masters]
-35.237.123.104
+35.231.170.2
 
 [workers]
-35.231.170.2
+35.190.177.213
 34.74.47.211
 
 # Ex 1: Ungrouped hosts, specify before any group headers.

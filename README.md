@@ -4,37 +4,37 @@ Creates a mongodb cluster based on docker images in Google Cloud.
 
 The virtual boxes can run docker containers to hold the nodes. Configuration and providioning is made from the host.
 
-## Network setup
+## Terraform setup
 
-This could be done in the future using terraform, but here is done manually.
+This will be done in the future using terraform, but here is done manually.
 
-Instances of Ubuntu 16.04 minimal were created in Google Cloud from desktop machine (verdi):
+Create manually 3 instances of Ubuntu 16.04 minimal in Google Cloud, from desktop machine (verdi) and write down IPs:
 
 0. verdi:  92.58.155.73 (local)
 
-1. docker1: 35.237.123.104 (Google Cloud)
+1. docker1: 35.231.170.2 (Google Cloud)
 
-2. docker2: 35.231.170.2 (Google Cloud)
+2. docker2: 35.190.177.213 (Google Cloud)
 
 3. docker3: 34.74.47.211 (Google Cloud)
 
-In `/etc/ansible/hosts`write:
+In `/etc/ansible/hosts` write their address:
 
 ```
 [masters]
-35.237.123.104
+35.231.170.2
 
 [workers]
-35.231.170.2
+35.190.177.213 
 34.74.47.211
 ```
 
 Remember thet in Google Cloud you first generate the cloud RSA access keys and send public to cloud manager. Then run in each node:
 
 ```
-export docker1=35.237.123.104
-export docker2=35.231.170.2
-export docker3=34.74.47.211 
+export docker1=35.231.170.2
+export docker2=35.190.177.213
+export docker3=34.74.47.211
 ```
 
 And don't forget to open port **2377** for swarm and **27017** for mongo.

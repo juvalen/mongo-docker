@@ -1,9 +1,74 @@
 ---
+  - name: Install docker
+    hosts: all
+    become: yes
+    remote_user: juan
+    gather_facts: False
+    tasks:
+      - name: Install apt-transport-https
+        apt: name=apt-transport-https
+
+      - name: Ensure docker registry is available
+        # For Ubuntu 16.04 LTS, use this repo:
+        apt_repository: repo='deb https://apt.dockerproject.org/repo ubuntu-xenial main' state=present
+
+      - name: Install aptitude using apt
+        apt: name=aptitude state=latest update_cache=yes force_apt_get=yes
+
+      - name: Install required system packages
+        apt: name={{ item }} state=latest update_cache=yes
+        loop: [ 'apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common', 'python3-pip', 'virtualenv', 'python3-setuptools']
+
+      - name: Add Docker GPG apt Key
+        apt_key:
+          url: https://download.docker.com/linux/ubuntu/gpg
+          state: present
+
+      - name: Add Docker Repository
+        apt_repository:
+          repo: deb https://download.docker.com/linux/ubuntu xenial stable
+          state: present
+
+      #- name: Update apt and install docker-ce
+        #apt: update_cache=yes name=docker-ce state=latest
+
+      - name: Install pip
+        apt:
+          force_apt_get: yes
+          name: ['python-pip', 'python-setuptools']
+          install_recommends: no
+          state: present
+
+      - name: Install Docker Module for Python
+        pip:
+          name: docker
+
+      - name: Removing previous dir
+        file:
+          path: /home/core
+          state: absent
+
+      - name: Create dir
+        file:
+          path: /home/core
+          state: directory
+
+      - name: Copy key file for mongodb with owner and permissions
+        copy:
+          src: mongodb-keyfile
+          dest: /home/core/mongodb-keyfile
+          owner: '999'
+          group: '999'
+          mode: '0600'
+
+
   - name: Init Swarm Master
     hosts: masters
-    gather_facts: False
+    become: yes
     remote_user: juan
+    gather_facts: False
     tasks:
+
       - name: Leave former Swarm 
         command: docker swarm leave --force
 
@@ -26,14 +91,15 @@
 
   - name: Join Swarm Cluster
     hosts: workers
+    become: yes
     remote_user: juan
     gather_facts: False
     vars:
       token: "{{ hostvars[groups['masters'][0]]['worker_token']['stdout'] }}"
       master: "{{ hostvars[groups['masters'][0]]['inventory_hostname'] }}"
     tasks:
-      - name: Leave former Swarm 
-        command: docker swarm leave
+      #- name: Leave former Swarm 
+        #command: docker swarm leave
 
       - name: Join Swarm Cluster as a Worker
         command: docker swarm join --token {{ token }} {{ master }}:2377
@@ -44,3 +110,4 @@
 
       - name: Show Errors
         debug: var=worker.stderr
+
