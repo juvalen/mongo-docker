@@ -1,0 +1,48 @@
+version: "3.3"
+services:
+  mongodb1:
+    image: mongo:latest
+    deploy:
+      restart_policy:
+        condition: any
+        delay: 30s
+      resources:
+        limits:
+          memory: 640m
+    command: --wiredTigerCacheSizeGB 0.5 --bind_ip_all --replSet rs0
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongodb1:/data/db
+  mongodb2:
+    image: mongo:latest
+    deploy:
+      restart_policy:
+        condition: any
+        delay: 30s
+      resources:
+        limits:
+          memory: 640m
+    command: --wiredTigerCacheSizeGB 0.5 --bind_ip_all --replSet rs0
+    ports:
+      - "27019:27017"
+    volumes:
+      - mongodb2:/data/db
+  mongodb3:
+    image: mongo:latest
+    deploy:
+      restart_policy:
+        condition: any
+        delay: 30s
+      resources:
+        limits:
+          memory: 640m
+    command: --wiredTigerCacheSizeGB 0.5 --bind_ip_all --replSet rs0
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb3:/data/db
+volumes:
+  mongodb1:
+  mongodb2:
+  mongodb3:

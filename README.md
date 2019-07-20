@@ -18,7 +18,7 @@ Create manually 3 instances of Ubuntu 16.04 minimal in Google Cloud, from deskto
 
 3. docker3: 34.74.47.211 (Google Cloud)
 
-In `/etc/ansible/hosts` write their address:
+In `hosts` write their external address:
 
 ```
 [masters]
@@ -29,15 +29,7 @@ In `/etc/ansible/hosts` write their address:
 34.74.47.211
 ```
 
-Remember thet in Google Cloud you first generate the cloud RSA access keys and send public to cloud manager. Then publish in each node the internal address:
-
-```
-export docker1=10.142.0.5
-export docker2=10.142.0.6
-export docker3=10.142.0.7
-```
-
-This will be appended to /etc/host:
+Remember thet in Google Cloud you first generate the cloud RSA access keys and send public to cloud manager. Then publish in each node the internal address, appending this to /etc/hosts. Ansible will do it as they are coded in the playbook:
 
 ```
 10.142.0.5 docker1
@@ -45,12 +37,12 @@ This will be appended to /etc/host:
 10.142.0.7 docker3
 ```
 
-And the external to <host>:
+And export the external to <host>:
 
 ```
-export docker1=35.231.170.2
+export docker3=35.231.170.2
 export docker2=35.190.177.213
-export docker3=34.74.47.211
+export docker1=35.237.123.104
 ```
 
 And don't forget to open port **2377** for swarm and **27017** for mongo.
@@ -61,17 +53,9 @@ In host generate ssl file:
 openssl rand -base64 741 > mongodb-keyfile
 ```
 
-And copy it from host to `/home/core` in each node.
+`mongodb-keyfile` will be copied from host to `/home/core` in each node, and changed ownerwhip and privileges.
 
-Then change `mongodb-keyfile` in nodes to be owned by **999**:
-
-```
-sudo chown 999:999 /home/core/mongodb-keyfile
-```
-
-## Manually
-
-### Docker engine
+## Install Docker swarm manually
 
 Install docker in each node:
 
@@ -128,7 +112,6 @@ $ docker rm mongo
 Start mongo in docker1:
 
 ```
-
 $ docker run \
 --name mongo \
 -v /home/core/mongo-files/data:/data/db \
@@ -200,18 +183,27 @@ See logs from VM with:
 
 ## Install Docker swarm using ansible
 
-Write this ./hosts file:
+Write external addresses of master and workers in `./hosts` file:
 
 ```
 [masters]
-35.237.123.104
 
 [workers]
-35.231.170.2
-34.74.47.211
 ```
 
+And adjust nodes public addresses in hosts and private in `playbook.yml`.
+
 `ansible-playbook -i hosts playnook.yml`
+
+## Deply mongo swarm
+
+Upload `mongo.compose.yml`to cluster master **docker1**.
+
+Execute:
+
+```
+$ docker stack deply -c mongo-compose.yml mongos
+```
 
 ## TODO
 
@@ -219,9 +211,9 @@ Do this with:
 
 1. Terraforrm over AWS
 
-1. Ansible to install a swarm <HERE
+1. Ansible to install a swarm <DONE
 
-1. Deploy mongo images with docker swarm
+1. Deploy mongo images with docker swarm <DONE
 
 ## Author
 
