@@ -6,25 +6,38 @@ The virtual boxes can run docker containers to hold the nodes. Configuration and
 
 ## Network setup
 
-Virtual boxes are created in Google Cloud from desktop machine (verdi):
+This could be done in the future using terraform, but here is done manually.
+
+Instances of Ubuntu 16.04 minimal were created in Google Cloud from desktop machine (verdi):
 
 0. verdi:  92.58.155.73 (local)
 
-1. docker1: 34.74.47.211 (Google Cloud)
+1. docker1: 35.237.123.104 (Google Cloud)
 
 2. docker2: 35.231.170.2 (Google Cloud)
 
-3. docker3: 35.237.123.104 (Google Cloud)
+3. docker3: 34.74.47.211 (Google Cloud)
 
-Remember you generate the cloud RSA access keys and send public to cloud manager. Then run in each node:
+In `/etc/ansible/hosts`write:
 
 ```
-export docker1=34.74.47.211
+[masters]
+35.237.123.104
+
+[workers]
+35.231.170.2
+34.74.47.211
+```
+
+Remember thet in Google Cloud you first generate the cloud RSA access keys and send public to cloud manager. Then run in each node:
+
+```
+export docker1=35.237.123.104
 export docker2=35.231.170.2
-export docker3=35.237.123.104
+export docker3=34.74.47.211 
 ```
 
-And don't forget to open por **27017**.
+And don't forget to open port **2377** for swarm and **27017** for mongo.
 
 In host generate ssl file:
 
@@ -40,7 +53,9 @@ Then change `mongodb-keyfile` in nodes to be owned by **999**:
 sudo chown 999:999 /home/core/mongodb-keyfile
 ```
 
-## Docker engine
+## Manually
+
+### Docker engine
 
 Install docker in each node:
 
@@ -167,19 +182,36 @@ See logs from VM with:
 
 `docker logs -ft mongo`
 
+## Install Docker swarm using ansible
+
+Write this ./hosts file:
+
+```
+[masters]
+35.237.123.104
+
+[workers]
+35.231.170.2
+34.74.47.211
+```
+
+`ansible-playbook -i hosts playnook.yml`
+
 ## TODO
 
 Do this with:
 
 1. Terraforrm over AWS
 
-1. Ansible to install a swarm
+1. Ansible to install a swarm <HERE
 
 1. Deploy mongo images with docker swarm
 
 ## Author
 
 Based in `https://medium.com/@ManagedKube/deploy-a-mongodb-cluster-in-steps-9-using-docker-49205e231319#.mle6a8wmg`
+
+Then setting up a swarm with ansible `https://www.labouardy.com/setup-docker-swarm-on-aws-using-ansible-terraform/`
 
 * **Juan Valentín-Pastrana** (jvalentinpastrana at gmail)
 

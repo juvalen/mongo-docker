@@ -2,8 +2,11 @@
   - name: Init Swarm Master
     hosts: masters
     gather_facts: False
-    remote_user: ec2-user
+    remote_user: juan
     tasks:
+      - name: Leave former Swarm 
+        command: docker swarm leave --force
+
       - name: Swarm Init
         command: docker swarm init --advertise-addr {{ inventory_hostname }}
 
@@ -23,12 +26,15 @@
 
   - name: Join Swarm Cluster
     hosts: workers
-    remote_user: ec2-user
+    remote_user: juan
     gather_facts: False
     vars:
       token: "{{ hostvars[groups['masters'][0]]['worker_token']['stdout'] }}"
       master: "{{ hostvars[groups['masters'][0]]['inventory_hostname'] }}"
     tasks:
+      - name: Leave former Swarm 
+        command: docker swarm leave
+
       - name: Join Swarm Cluster as a Worker
         command: docker swarm join --token {{ token }} {{ master }}:2377
         register: worker
