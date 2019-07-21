@@ -1,41 +1,18 @@
-resource "aws_key_pair" "default" {
-  key_name   = "clusterkp"
-  public_key = file(var.key_path)
-}
+resource "google_compute_instance" "dockermaster" {
+  name         = "docker-master"
+  machine_type = "f1-micro"
 
-resource "aws_instance" "master" {
-  ami                    = var.ami
-  instance_type          = var.instance_type
-  key_name               = aws_key_pair.default.id
-  user_data              = file(var.bootstrap_path)
-  vpc_security_group_ids = [aws_security_group.default.id]
-
-  tags = {
-    Name = "master"
+  boot_disk {
+    initialize_params {
+      image = "ubuntu-os-cloud/ubuntu-minimal-1604-lts"
+    }
   }
-}
 
-resource "aws_instance" "worker1" {
-  ami                    = var.ami
-  instance_type          = var.instance_type
-  key_name               = aws_key_pair.default.id
-  user_data              = file(var.bootstrap_path)
-  vpc_security_group_ids = [aws_security_group.default.id]
-
-  tags = {
-    Name = "worker 1"
-  }
-}
-
-resource "aws_instance" "worker2" {
-  ami                    = var.ami
-  instance_type          = var.instance_type
-  key_name               = aws_key_pair.default.id
-  user_data              = file(var.bootstrap_path)
-  vpc_security_group_ids = [aws_security_group.default.id]
-
-  tags = {
-    Name = "worker 2"
+  network_interface {
+    # A default network is created for all GCP projects
+    network       = "default"
+    access_config {
+    }
   }
 }
 

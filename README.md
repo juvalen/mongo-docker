@@ -221,6 +221,8 @@ Based in `https://medium.com/@ManagedKube/deploy-a-mongodb-cluster-in-steps-9-us
 
 Then setting up a swarm with ansible `https://www.labouardy.com/setup-docker-swarm-on-aws-using-ansible-terraform/`
 
+MongoDB cluster by https://medium.com/@oclausen/deploying-a-mongodb-replica-set-on-aws-docker-swarm-c1c785b61aa9
+
 * **Juan Valentín-Pastrana** (jvalentinpastrana at gmail)
 
 Send feedback if you wish.

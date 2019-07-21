@@ -1,6 +1,6 @@
 provider "google" {
-  credentials = file("test2-351c2104567b.json")
-  project     = "test2"
+  credentials = "${file("account.json")}"
+  project     = "test1-247209"
   region      = "us-east1"
   zone        = "us-east1-b"
 }
