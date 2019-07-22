@@ -6,9 +6,9 @@ The virtual boxes can run docker containers to hold the nodes. Configuration and
 
 ## Terraform setup
 
-This will be done in the future using terraform, but here is done manually.
+This creates three f1-micro instances in Google Cloud.
 
-Create manually 3 instances of Ubuntu 16.04 minimal in Google Cloud, from desktop machine (verdi) and write down IPs:
+After creation of 3 instances of Ubuntu 16.04 minimal in Google Cloud from desktop machine (verdi), write down IPs:
 
 0. verdi:  92.58.155.73 (local)
 
@@ -29,7 +29,7 @@ In `hosts` write their external address:
 34.74.47.211
 ```
 
-Remember thet in Google Cloud you first generate the cloud RSA access keys and send public to cloud manager. Then publish in each node the internal address, appending this to /etc/hosts. Ansible will do it as they are coded in the playbook:
+For accessing the, remember that in Google Cloud you first generate the cloud RSA access keys and send public to cloud manager. Then publish in each node the internal address, appending this to /etc/hosts. Ansible will do it as they are hardcoded in the playbook:
 
 ```
 10.142.0.5 docker1
@@ -86,22 +86,6 @@ $ docker run --name mongo \
 -d mongo:latest --smallfiles
 ```
 
-Then log in the container and add an admin & root user at mongo prompt:
-
-```
-> use admin
-> db.createUser( {
-     user: "siteUserAdmin",
-     pwd: "123poi",
-     roles: [ { role: "userAdminAnyDatabase", db: "admin" } ]
-   });
-> db.createUser( {
-     user: "siteRootAdmin",
-     pwd: "123poi",
-     roles: [ { role: "root", db: "admin" } ]
-   });
-```
-
 Now restart mongo container authenticated from the VM, remember to run first:
 
 ```
@@ -143,6 +127,55 @@ $ docker run \
 --replSet "rs0"
 ```
 
+See logs from VM with:
+
+`docker logs -ft mongo`
+
+## Install Docker swarm using ansible
+
+Write external addresses of master and workers in `./hosts` file:
+
+```
+[masters]
+35.237.123.104
+
+[workers]
+35.231.170.2
+35.190.177.213
+```
+
+Chang that public addresses accordingly in hosts and private addresses in `playbook.yml`.
+
+`ansible-playbook -i hosts playnook.yml`
+
+## Deploy mongo swarm
+
+Upload `mongo.compose.yml`to cluster master **docker1**.
+
+Execute:
+
+```
+$ docker stack deploy -c mongo-compose.yml mongos
+```
+
+## Mongo setup
+
+Connect to `docker1` master isntance and log to the container and add an admin & root user at mongo prompt:
+
+```
+> use admin
+> db.createUser( {
+     user: "siteUserAdmin",
+     pwd: "123poi",
+     roles: [ { role: "userAdminAnyDatabase", db: "admin" } ]
+   });
+> db.createUser( {
+     user: "siteRootAdmin",
+     pwd: "123poi",
+     roles: [ { role: "root", db: "admin" } ]
+   });
+```
+
 Add to cluster, from docker1:
 
 ```
@@ -177,39 +210,11 @@ In secondary nodes run:
 rs.slaveOk()
 ```
 
-See logs from VM with:
-
-`docker logs -ft mongo`
-
-## Install Docker swarm using ansible
-
-Write external addresses of master and workers in `./hosts` file:
-
-```
-[masters]
-
-[workers]
-```
-
-And adjust nodes public addresses in hosts and private in `playbook.yml`.
-
-`ansible-playbook -i hosts playnook.yml`
-
-## Deply mongo swarm
-
-Upload `mongo.compose.yml`to cluster master **docker1**.
-
-Execute:
-
-```
-$ docker stack deply -c mongo-compose.yml mongos
-```
-
 ## TODO
 
 Do this with:
 
-1. Terraforrm over AWS
+1. Terraforrm over GCE <DONE
 
 1. Ansible to install a swarm <DONE
 
