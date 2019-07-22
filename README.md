@@ -230,6 +230,8 @@ Then setting up a swarm with ansible `https://www.labouardy.com/setup-docker-swa
 
 MongoDB cluster by https://medium.com/@oclausen/deploying-a-mongodb-replica-set-on-aws-docker-swarm-c1c785b61aa9
 
+Data for Google Cloud provider https://www.terraform.io/docs/providers/google/index.html
+
 * **Juan Valentín-Pastrana** (jvalentinpastrana at gmail)
 
 Send feedback if you wish.
