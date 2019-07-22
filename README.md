@@ -1,10 +1,10 @@
-# MongoDB with docker containers in Google Cloud
+# Installs MongoDB cluster with docker containers in Google Cloud
 
 Creates a mongodb cluster based on docker images in Google Cloud, which are created with Terraform.
 
-The virtual boxes can run docker containers to hold the nodes. Configuration of docker swarm is made with ansible.
+A docker swarm is built n the VMs to run docker containers to hold the mongo images. Configuration of docker swarm is made with ansible.
 
-MongoDB cluster boxes is installed using docker swarm.
+MongoDB cluster boxes are installed using docker swarm.
 
 ## Terraform setup
 
@@ -135,7 +135,7 @@ See logs from VM with:
 
 ## Install Docker swarm using ansible
 
-Write external addresses of master and workers in `./hosts` file:
+Write external addresses of master and workers in `./hosts` file. Change shown public addresses accordingly in hosts and private addresses in `playbook.yml` to yours.
 
 ```
 [masters]
@@ -146,7 +146,7 @@ Write external addresses of master and workers in `./hosts` file:
 35.190.177.213
 ```
 
-Chang that public addresses accordingly in hosts and private addresses in `playbook.yml`.
+Then just run:
 
 `ansible-playbook -i hosts playnook.yml`
 
@@ -160,7 +160,7 @@ Execute:
 $ docker stack deploy -c mongo-compose.yml mongos
 ```
 
-## Mongo setup
+## MongoDB setup
 
 Connect to `docker1` master isntance and log to the container and add an admin & root user at mongo prompt:
 
@@ -168,12 +168,12 @@ Connect to `docker1` master isntance and log to the container and add an admin &
 > use admin
 > db.createUser( {
      user: "siteUserAdmin",
-     pwd: "123poi",
+     pwd: "<any_password>",
      roles: [ { role: "userAdminAnyDatabase", db: "admin" } ]
    });
 > db.createUser( {
      user: "siteRootAdmin",
-     pwd: "123poi",
+     pwd: "<other_password>",
      roles: [ { role: "root", db: "admin" } ]
    });
 ```
@@ -182,7 +182,7 @@ Add to cluster, from docker1:
 
 ```
 > use admin
-> db.auth("siteRootAdmin", "123poi");
+> db.auth("siteRootAdmin", "<other_password>");
 rs0:PRIMARY> rs.add("docker2")`
 rs0:PRIMARY> rs.add("docker3")`
 ```
@@ -224,6 +224,10 @@ Do this with:
 
 ## Author
 
+* **Juan Valentín-Pastrana** (jvalentinpastrana at gmail)
+
+Send feedback if you wish.
+
 Based in `https://medium.com/@ManagedKube/deploy-a-mongodb-cluster-in-steps-9-using-docker-49205e231319#.mle6a8wmg`
 
 Then setting up a swarm with ansible `https://www.labouardy.com/setup-docker-swarm-on-aws-using-ansible-terraform/`
@@ -231,8 +235,4 @@ Then setting up a swarm with ansible `https://www.labouardy.com/setup-docker-swa
 MongoDB cluster by https://medium.com/@oclausen/deploying-a-mongodb-replica-set-on-aws-docker-swarm-c1c785b61aa9
 
 Data for Google Cloud provider https://www.terraform.io/docs/providers/google/index.html
-
-* **Juan Valentín-Pastrana** (jvalentinpastrana at gmail)
-
-Send feedback if you wish.
 
