@@ -1,8 +1,10 @@
 # MongoDB with docker containers in Google Cloud
 
-Creates a mongodb cluster based on docker images in Google Cloud.
+Creates a mongodb cluster based on docker images in Google Cloud, which are created with Terraform.
 
-The virtual boxes can run docker containers to hold the nodes. Configuration and providioning is made from the host.
+The virtual boxes can run docker containers to hold the nodes. Configuration of docker swarm is made with ansible.
+
+MongoDB cluster boxes is installed using docker swarm.
 
 ## Terraform setup
 
