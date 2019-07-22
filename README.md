@@ -6,7 +6,7 @@ A docker swarm is built n the VMs to run docker containers to hold the mongo ima
 
 MongoDB cluster boxes are installed using docker swarm.
 
-## Terraform setup
+## Manual infrastructure installation
 
 This creates three f1-micro instances in Google Cloud.
 
@@ -57,7 +57,19 @@ openssl rand -base64 741 > mongodb-keyfile
 
 `mongodb-keyfile` will be copied from host to `/home/core` in each node, and changed ownerwhip and privileges.
 
-## Install Docker swarm manually
+## Infrastructure installation with Terraform
+
+Run in <host>:
+
+'''
+$ sudo terraform init
+
+$ sudo terraform plan
+
+$ sudo terraform apply
+'''
+
+## Manual Docker swarm installation
 
 Install docker in each node:
 
@@ -133,7 +145,7 @@ See logs from VM with:
 
 `docker logs -ft mongo`
 
-## Install Docker swarm using ansible
+## Docker swarm installation with Ansible
 
 Write external addresses of master and workers in `./hosts` file. Change shown public addresses accordingly in hosts and private addresses in `playbook.yml` to yours.
 
