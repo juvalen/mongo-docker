@@ -137,15 +137,6 @@ See logs from VM with:
 
 Write external addresses of master and workers in `./hosts` file. Change shown public addresses accordingly in hosts and private addresses in `playbook.yml` to yours.
 
-```
-[masters]
-35.237.123.104
-
-[workers]
-35.231.170.2
-35.190.177.213
-```
-
 Then just run:
 
 `ansible-playbook -i hosts playnook.yml`
