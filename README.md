@@ -59,7 +59,7 @@ openssl rand -base64 741 > mongodb-keyfile
 
 ## Infrastructure installation with Terraform
 
-In localhost run:
+Install Terraform in localhost and run:
 
 ```
 $ cd terraform
