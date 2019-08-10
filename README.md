@@ -8,11 +8,11 @@ MongoDB cluster boxes are installed using docker swarm.
 
 ## Manual infrastructure installation
 
-This creates three f1-micro instances in Google Cloud.
+Create from the GCP console three f1-micro instances.
 
 After creation of 3 instances of Ubuntu 16.04 minimal in Google Cloud from desktop machine (verdi), write down IPs:
 
-0. verdi:  92.58.155.73 (local)
+0. verdi:  92.58.155.73 (localhost)
 
 1. docker1: 35.231.170.2 (Google Cloud)
 
@@ -20,7 +20,7 @@ After creation of 3 instances of Ubuntu 16.04 minimal in Google Cloud from deskt
 
 3. docker3: 34.74.47.211 (Google Cloud)
 
-In `hosts` write their external address:
+In `hosts` file in local machine write their external address:
 
 ```
 [masters]
@@ -39,7 +39,7 @@ For accessing the, remember that in Google Cloud you first generate the cloud RS
 10.142.0.7 docker3
 ```
 
-And export the external to <host>:
+And export the external addresses in localhost:
 
 ```
 export docker3=35.231.170.2
@@ -49,25 +49,27 @@ export docker1=35.237.123.104
 
 And don't forget to open port **2377** for swarm and **27017** for mongo.
 
-In host generate ssl file:
+In localhost generate the ssl file:
 
 ```
 openssl rand -base64 741 > mongodb-keyfile
 ```
 
-`mongodb-keyfile` will be copied from host to `/home/core` in each node, and changed ownerwhip and privileges.
+`mongodb-keyfile` will be copied from localhost to `/home/core` in each node, and changed ownerwhip and privileges.
 
 ## Infrastructure installation with Terraform
 
-Run in <host>:
+In localhost run:
 
-'''
+```
+$ cd terraform
+
 $ sudo terraform init
 
 $ sudo terraform plan
 
 $ sudo terraform apply
-'''
+```
 
 ## Manual Docker swarm installation
 
