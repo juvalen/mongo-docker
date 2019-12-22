@@ -2,7 +2,7 @@
 
 Creates a mongodb cluster based on docker images in Google Cloud, which are created with Terraform.
 
-A docker swarm is built n the VMs to run docker containers to hold the mongo images. Configuration of docker swarm is made with ansible.
+A docker swarm is built in the VMs to run docker containers to hold the mongo images. Configuration of docker swarm is made with ansible.
 
 MongoDB cluster boxes are installed using docker swarm.
 
