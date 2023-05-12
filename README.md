@@ -1,6 +1,6 @@
 # Installs MongoDB cluster with docker containers in Google Cloud
 
-Creates a mongodb cluster based on docker images in Google Cloud, which are created with Terraform.
+This shows how to create a mongodb cluster based on docker images in Google Cloud compute engines, which are first created with Terraform.
 
 A docker swarm is built in the VMs to run docker containers to hold the mongo images. Configuration of docker swarm is made with ansible.
 
@@ -153,7 +153,7 @@ Write external addresses of master and workers in `./hosts` file. Change shown p
 
 Then just run:
 
-`ansible-playbook -i hosts playnook.yml`
+`ansible-playbook -i hosts playbook.yml`
 
 ## Deploy mongo swarm
 
@@ -167,7 +167,7 @@ $ docker stack deploy -c mongo-compose.yml mongos
 
 ## MongoDB setup
 
-Connect to `docker1` master isntance and log to the container and add an admin & root user at mongo prompt:
+ssh to `docker1` master instance and log to the container and add an admin & root user at mongo prompt:
 
 ```
 > use admin
