@@ -157,7 +157,7 @@ Then just run:
 
 ## Deploy mongo swarm
 
-Upload `mongo.compose.yml`to cluster master **docker1**.
+Upload `mongo-compose.yml`to cluster master **docker1**.
 
 Execute:
 
