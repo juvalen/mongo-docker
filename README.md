@@ -6,9 +6,9 @@ A docker swarm is built in the VMs to run docker containers to hold the mongo im
 
 MongoDB cluster boxes are installed using docker swarm.
 
-## Manual infrastructure installation
+## Manual infrastructure creation
 
-Create from the GCP console three f1-micro instances.
+Create from the GCP console three f1-micro instances: docker[1..3]
 
 After creation of 3 instances of Ubuntu 16.04 minimal in Google Cloud from desktop machine (verdi), write down IPs:
 
@@ -27,7 +27,7 @@ In `hosts` file in local machine write their external address:
 35.231.170.2
 
 [workers]
-35.190.177.213 
+35.190.177.213
 34.74.47.211
 ```
 
@@ -55,9 +55,9 @@ In localhost generate the ssl file:
 openssl rand -base64 741 > mongodb-keyfile
 ```
 
-`mongodb-keyfile` will be copied from localhost to `/home/core` in each node, and changed ownerwhip and privileges.
+`mongodb-keyfile` will be copied from localhost to `/home/core` in each node, and then changed ownership and privileges.
 
-## Infrastructure installation with Terraform
+## Infrastructure setup with Terraform
 
 Install Terraform in localhost and run:
 
@@ -83,7 +83,7 @@ sudo apt -y update
 sudo apt install -y docker-ce docker-ce-cli containerd.io
 ```
 
-Add current user to docker group so as not using sudo:
+Add current user to docker group so it won't need using sudo:
 
 ```
 sudo usermod -a -G docker <user>
@@ -102,7 +102,7 @@ $ docker run --name mongo \
 -d mongo:latest --smallfiles
 ```
 
-Now restart mongo container authenticated from the VM, remember to run first:
+Now restart mongo container once authenticated from the VM, remember to run first:
 
 ```
 $ docker stop mongo
@@ -149,7 +149,7 @@ See logs from VM with:
 
 ## Docker swarm installation with Ansible
 
-Write external addresses of master and workers in `./hosts` file. Change shown public addresses accordingly in hosts and private addresses in `playbook.yml` to yours.
+Write external addresses of master and workers in `./hosts` file. Change shown public addresses accordingly in hosts and private addresses found in `playbook.yml` to yours.
 
 Then just run:
 
@@ -233,11 +233,12 @@ Do this with:
 
 Send feedback if you wish.
 
-Based in `https://medium.com/@ManagedKube/deploy-a-mongodb-cluster-in-steps-9-using-docker-49205e231319#.mle6a8wmg`
+## References
 
-Then setting up a swarm with ansible `https://www.labouardy.com/setup-docker-swarm-on-aws-using-ansible-terraform/`
+Based on https://medium.com/@ManagedKube/deploy-a-mongodb-cluster-in-steps-9-using-docker-49205e231319#.mle6a8wmg
+
+For setting up a swarm with ansible see https://www.labouardy.com/setup-docker-swarm-on-aws-using-ansible-terraform/
 
 MongoDB cluster by https://medium.com/@oclausen/deploying-a-mongodb-replica-set-on-aws-docker-swarm-c1c785b61aa9
 
-Data for Google Cloud provider https://www.terraform.io/docs/providers/google/index.html
-
+Data for Google Cloud provider found in https://www.terraform.io/docs/providers/google/index.html
