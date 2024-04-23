@@ -31,7 +31,7 @@ In `hosts` file in local machine write their external address:
 34.74.47.211
 ```
 
-For accessing the, remember that in Google Cloud you first generate the cloud RSA access keys and send public to cloud manager. Then publish in each node the internal address, appending this to /etc/hosts. Ansible will do it as they are hardcoded in the playbook:
+For accessing the VMs remember that in Google Cloud you first generate the cloud RSA access keys and send public to cloud manager. Then publish in each node the internal address, appending this to /etc/hosts. Ansible will do it as they are hardcoded in the playbook:
 
 ```
 10.142.0.5 docker1
