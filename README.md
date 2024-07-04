@@ -126,7 +126,7 @@ $ docker run \
 --replSet "rs0"
 ```
 
-And next in node2, node3... start mongo image:
+And next in docker2, docker3... start mongo image:
 
 ```
 $ docker run \
