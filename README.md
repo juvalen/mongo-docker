@@ -20,7 +20,7 @@ After creation of 3 instances of Ubuntu 16.04 minimal in Google Cloud from deskt
 
 3. docker3: 34.74.47.211 (Google Cloud)
 
-In `hosts` file in local machine write their external address:
+In ansible `hosts` file (inventory) in local machine write their external address:
 
 ```
 [masters]
@@ -73,7 +73,7 @@ $ sudo terraform apply
 
 ## Manual Docker swarm installation
 
-Install docker in each node:
+Install docker on each node:
 
 ```
 sudo apt update
